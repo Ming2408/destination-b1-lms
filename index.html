@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination B1 - Visual LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .wrong { border: 2px solid red; background: #fee2e2; }
+        .correct { border: 2px solid green; background: #dcfce7; }
+        .feedback { font-size: 0.875rem; margin-top: 4px; display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans">
+    <div class="max-w-4xl mx-auto">
+        <header class="bg-white p-6 rounded-xl shadow-sm mb-6">
+            <h1 class="text-2xl font-bold text-blue-600">Unit 1: Present Simple vs. Present Continuous</h1>
+            <p class="text-gray-500">Tiến độ: <span id="progress">0</span>%</p>
+        </header>
+
+        <section class="bg-white p-6 rounded-xl shadow-sm mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">1. Visual Grammar</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-bold text-blue-700">Present Simple (Thói quen)</p>
+                    <div id="img-simple" class="my-2 bg-gray-200 h-32 flex items-center justify-center rounded"></div>
+                    <p class="italic text-sm">"I usually get up at 7."</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="font-bold text-green-700">Present Continuous (Đang diễn ra)</p>
+                    <div id="img-cont" class="my-2 bg-gray-200 h-32 flex items-center justify-center rounded"></div>
+                    <p class="italic text-sm">"I am eating breakfast now."</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">2. Practice (No Hints!)</h2>
+            <div id="quiz-container" class="space-y-6">
+                <div class="question-block" data-answer="is playing">
+                    <p class="mb-2">1. Look! Somebody ___________ (play) the piano. <button onclick="speak('is playing')" class="text-blue-400">🔊</button></p>
+                    <input type="text" class="border p-2 rounded w-full md:w-1/2 outline-none focus:ring-2" placeholder="Gõ đáp án vào đây...">
+                    <div class="feedback text-red-600">Sai rồi! "Look!" là dấu hiệu đang diễn ra. Phải dùng: is + V-ing.</div>
+                </div>
+            </div>
+            <button onclick="checkAnswers()" class="mt-8 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Chấm điểm & Lưu tiến độ</button>
+        </section>
+    </div>
+
+    <script>
+        // Hàm phát âm IPA chuẩn Mỹ
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        }
+
+        // Logic chấm điểm và lưu lịch sử
+        function checkAnswers() {
+            const blocks = document.querySelectorAll('.question-block');
+            let correctCount = 0;
+
+            blocks.forEach(block => {
+                const input = block.querySelector('input');
+                const feedback = block.querySelector('.feedback');
+                const answer = block.getAttribute('data-answer').toLowerCase();
+
+                if (input.value.trim().toLowerCase() === answer) {
+                    input.classList.remove('wrong');
+                    input.classList.add('correct');
+                    feedback.style.display = 'none';
+                    correctCount++;
+                } else {
+                    input.classList.remove('correct');
+                    input.classList.add('wrong');
+                    feedback.style.display = 'block';
+                }
+            });
+
+            // Lưu vào LocalStorage
+            const score = Math.round((correctCount / blocks.length) * 100);
+            localStorage.setItem('unit1_score', score);
+            document.getElementById('progress').innerText = score;
+            alert('Đã lưu tiến độ! Điểm của bạn: ' + score + '%');
+        }
+
+        // Load tiến độ khi mở trang
+        window.onload = () => {
+            const savedScore = localStorage.getItem('unit1_score');
+            if (savedScore) document.getElementById('progress').innerText = savedScore;
+        }
+    </script>
+</body>
+</html>
